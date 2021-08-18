@@ -5,23 +5,19 @@ require_once("vendor/autoload.php");
 
 //подключаем db
 require_once("db_connect.php");
-
-//выводим все книги
-require_once("selectBooks.php");
+require("botFunctions.php");
 
 
 //create bot value
 $token = "1906948976:AAFnfC_VyFRjaORv8-x78mb7AKyqZlZtWV4";
 $bot = new \TelegramBot\Api\Client($token);
-$bdConnect = connectDB();
+$pdo = connectDB(); // переменная при подключении к БД, будет нужна, когда будут запросы
 
 //если бот еще не зарегистрирован - регистрируем
 if (!file_exists("registered.trigger")) {
-	/*
-	 * файл registered.trigger будет создаваться после регистрации бота
-	 * файла нет - бот не зарегистрирован
+	/*файл registered.trigger будет создаваться после регистрации бота
+	 *файла нет - бот не зарегистрирован
 	*/
-	
 	// урл текущей страницы
 	$page_url = "https://".$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
 	$result = $bot->setWebhook($page_url);
@@ -33,40 +29,23 @@ if (!file_exists("registered.trigger")) {
 
 
 // запуск бота (функция /start)
-$bot->command('start', function($message) use($bot) {
-	$answer = "Welcome";
-	$bot->sendMessage($message->getChat()->getId(), $answer);
-});
-
-
+functionStart($bot);
 // функция /help
-$bot->command('help', function($message) use($bot) {
-	$answer = "Команды:
-	/help - помощь
-	/getpict - показать котю
-	/getbooks - вывести книги";
-	$bot->sendMessage($message->getChat()->getId(), $answer);
-});
+functionGetHelp($bot);
 
-$bot->command('getpict', function($message) use($bot) {
-	$pict = "https://pbs.twimg.com/media/EX-cofHWsAAl_H9.jpg";
-	$bot->sendPhoto($message->getChat()->getId(), $pict);
-});
+functionGetPicture($bot);
 
-// функция 
-$bot->command('getBooks', function($message) use($bot) {
-	$books = selectBooks($dbh);
-	$bot->sendMessage($message->getChat()->getId(), $books);
-});
+functionGetBook($bot);
 
+showAllArrays($pdo);
+
+showAllBooks($pdo);
+
+//functionGetAllBooks($bot, $pdo);
 
 if(!empty($bot->getRawBody())) {
 	$bot->run();
 }
-
-
-
-
 
 
 ?>
