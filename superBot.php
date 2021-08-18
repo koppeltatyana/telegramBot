@@ -9,7 +9,7 @@ require("botFunctions.php");
 
 
 //create bot value
-$token = "1906948976:AAFnfC_VyFRjaORv8-x78mb7AKyqZlZtWV4";
+$token = "token";
 $bot = new \TelegramBot\Api\Client($token);
 $pdo = connectDB(); // переменная при подключении к БД, будет нужна, когда будут запросы
 
